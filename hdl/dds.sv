@@ -82,13 +82,13 @@ always_ff @(posedge clk) begin
         sin_quadrant_index <= phase_buf[PHASE_DW-1:PHASE_DW-2];  
         // sin
         if (phase_buf[PHASE_DW - 2]) // if in 2nd or 4th quadrant
-            sin_lut_index <= ~phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH] + 1;
+            sin_lut_index <= ~phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH] + 1'b1;
         else
             sin_lut_index <= phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH];
         // cos
         if (SIN_COS || USE_TAYLOR) begin
             if (!phase_buf[PHASE_DW - 2]) // if in 1st or 3rd quadrant
-                cos_lut_index <= ~phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH] + 1;
+                cos_lut_index <= ~phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH] + 1'b1;
             else
                 cos_lut_index <= phase_buf[PHASE_DW - 3 -: EFFECTIVE_LUT_WIDTH];
         end
