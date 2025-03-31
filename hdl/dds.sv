@@ -211,16 +211,21 @@ reg [TAYLOR_PIPELINE_STAGES - 1 : 0] valid_taylor;
 if (USE_TAYLOR) begin
     always_ff@(posedge clk) begin
         integer k;
-        for (k = 0; k < TAYLOR_PIPELINE_STAGES; k = k + 1) begin
-            if (!reset_n) begin
+        if (!reset_n) begin
+            for (k = 0; k < TAYLOR_PIPELINE_STAGES - 1; k = k + 1) begin
                 out_sin_buf_taylor[k] <= '0;
                 out_cos_buf_taylor[k] <= '0;
-                sin_extended[k] <= '0;
-                cos_extended[k] <= '0;
                 phase_error_multiplied_buf[k] <= '0;
                 phase_error_multiplied_buf2[k] <= '0;
+                sin_extended[k] <= '0;
+                cos_extended[k] <= '0;
                 valid_taylor[k] <= '0;
-            end else begin
+            end
+            sin_extended[TAYLOR_PIPELINE_STAGES - 1] <= '0;
+            cos_extended[TAYLOR_PIPELINE_STAGES - 1] <= '0;
+            valid_taylor[TAYLOR_PIPELINE_STAGES - 1] <= '0;
+        end else begin
+            for (k = 0; k < TAYLOR_PIPELINE_STAGES; k = k + 1) begin
                 if(k == 0) begin  // stage 5
                     out_sin_buf_taylor[k]           <= out_sin_phase;
                     out_cos_buf_taylor[k]           <= out_cos_phase;
@@ -229,7 +234,7 @@ if (USE_TAYLOR) begin
                     phase_error_multiplied_buf[k]   <= phase_error_multiplied;
                     phase_error_multiplied_buf2[k]  <= phase_error_multiplied;
                     valid_taylor[k]                 <= phase_error_valid;
-                end
+                    end
                 else if (k < TAYLOR_PIPELINE_STAGES -1) begin  // stages 6-7
                     out_sin_buf_taylor[k]           <= out_sin_buf_taylor[k-1];
                     out_cos_buf_taylor[k]           <= out_cos_buf_taylor[k-1];
